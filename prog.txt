@@ -1,0 +1,324 @@
+
+Image select
+
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+img = cv2.imread('watch.jpg',cv2.IMREAD_GRAYSCALE)
+cv2.imshow('image',img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+video capture
+
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture(0)
+ 
+while(True):
+    ret, frame = cap.read()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+ 
+    cv2.imshow('frame',gray)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+
+writing text and drawing shape in image
+
+import numpy as np
+import cv2
+
+img = cv2.imread('watch.jpg',cv2.IMREAD_COLOR)
+cv2.line(img,(0,0),(200,300),(255,255,255),50)
+cv2.rectangle(img,(500,250),(1000,500),(0,0,255),15)
+cv2.circle(img,(447,63), 63, (0,255,0), -1)
+pts = np.array([[100,50],[200,300],[700,200],[500,100]], np.int32)
+pts = pts.reshape((-1,1,2))
+cv2.polylines(img, [pts], True, (0,255,255), 3)
+font = cv2.FONT_HERSHEY_SIMPLEX
+cv2.putText(img,'Crazyschool opencv!',(10,500), font, 6, (200,255,155), 13, cv2.LINE_AA)
+cv2.imshow('image',img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+threshold
+
+import cv2
+import numpy as np
+
+img = cv2.imread('bookpage.jpg')
+retval, threshold = cv2.threshold(img, 12, 255, cv2.THRESH_BINARY)
+cv2.imshow('original',img)
+cv2.imshow('threshold',threshold)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+threshold with binary
+
+import cv2
+import numpy as np
+
+grayscaled = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+retval, threshold = cv2.threshold(grayscaled, 10, 255, cv2.THRESH_BINARY)
+cv2.imshow('original',img)
+cv2.imshow('threshold',threshold)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+adaptive threshold
+
+import cv2
+import numpy as np
+
+th = cv2.adaptiveThreshold(grayscaled, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 115, 1)
+cv2.imshow('original',img)
+cv2.imshow('Adaptive threshold',th)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+color filter
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+
+while(1):
+    _, frame = cap.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    lower_red = np.array([30,150,50])
+    upper_red = np.array([255,255,180])
+    
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+
+    cv2.imshow('frame',frame)
+    cv2.imshow('mask',mask)
+    cv2.imshow('res',res)
+    
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+
+
+
+Image blurring:
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+
+while(1):
+
+    _, frame = cap.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    lower_red = np.array([30,150,50])
+    upper_red = np.array([255,255,180])
+    
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+    kernel = np.ones((15,15),np.float32)/225
+    smoothed = cv2.filter2D(res,-1,kernel)
+    cv2.imshow('Original',frame)
+    cv2.imshow('Averaging',smoothed)
+
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+
+
+
+MOrphological Transformations : 
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+
+while(1):
+
+    _, frame = cap.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    lower_red = np.array([30,150,50])
+    upper_red = np.array([255,255,180])
+    
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+
+    kernel = np.ones((5,5),np.uint8)
+    erosion = cv2.erode(mask,kernel,iterations = 1)
+    dilation = cv2.dilate(mask,kernel,iterations = 1)
+
+    cv2.imshow('Original',frame)
+    cv2.imshow('Mask',mask)
+    cv2.imshow('Erosion',erosion)
+    cv2.imshow('Dilation',dilation)
+
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+
+
+Gradients :
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(1)
+
+while(1):
+
+    # Take each frame
+    _, frame = cap.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    lower_red = np.array([30,150,50])
+    upper_red = np.array([255,255,180])
+    
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+
+    laplacian = cv2.Laplacian(frame,cv2.CV_64F)
+    sobelx = cv2.Sobel(frame,cv2.CV_64F,1,0,ksize=5)
+    sobely = cv2.Sobel(frame,cv2.CV_64F,0,1,ksize=5)
+
+    cv2.imshow('Original',frame)
+    cv2.imshow('Mask',mask)
+    cv2.imshow('laplacian',laplacian)
+    cv2.imshow('sobelx',sobelx)
+    cv2.imshow('sobely',sobely)
+
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+
+
+
+
+Canny Edge :
+
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)
+
+while(1):
+
+    _, frame = cap.read()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
+    lower_red = np.array([30,150,50])
+    upper_red = np.array([255,255,180])
+    
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+
+    cv2.imshow('Original',frame)
+    edges = cv2.Canny(frame,100,200)
+    cv2.imshow('Edges',edges)
+
+    k = cv2.waitKey(5) & 0xFF
+    if k == 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+
+
+
+Foreground extraction :
+
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
+
+img = cv2.imread('opencv-python-foreground-extraction-tutorial.jpg')
+mask = np.zeros(img.shape[:2],np.uint8)
+
+bgdModel = np.zeros((1,65),np.float64)
+fgdModel = np.zeros((1,65),np.float64)
+
+rect = (161,79,150,150)
+cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+img = img*mask2[:,:,np.newaxis]
+
+plt.imshow(img)
+plt.colorbar()
+plt.show()
+
+
+
+
+MOG Background Reduction :
+
+import numpy as np
+import cv2
+
+cap = cv2.VideoCapture('people-walking.mp4')
+fgbg = cv2.createBackgroundSubtractorMOG2()
+
+while(1):
+    ret, frame = cap.read()
+
+    fgmask = fgbg.apply(frame)
+ 
+    cv2.imshow('fgmask',frame)
+    cv2.imshow('frame',fgmask)
+
+    
+    k = cv2.waitKey(30) & 0xff
+    if k == 27:
+        break
+    
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
