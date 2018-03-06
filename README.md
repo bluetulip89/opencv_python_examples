@@ -35,3 +35,10 @@ If you get no errors, then you are ready to go. Ready? Let's dive off the deep-e
 
 
 credits : Harrison , Python Programmer.
+
+
+For Image detection & recognition try the following link:
+
+https://thecodacus.com/object-recognition-using-opencv-python/#.Wp35k-bhXCI
+
+https://github.com/techweed/object-detection
